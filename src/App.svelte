@@ -1,4 +1,4 @@
-git branch -M main<script>
+<script>
   import * as d3 from "d3";
   import { onMount } from "svelte";
   import { unis, links, universities_coordiantes } from "./utils";
