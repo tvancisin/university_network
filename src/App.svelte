@@ -3,39 +3,6 @@
   import { onMount } from "svelte";
   import { unis, links, universities_coordiantes } from "./utils";
 
-  // projection
-  $: europeProjection = d3
-    .geoOrthographic()
-    .center([4, 55])
-    .scale([width * 1.1])
-    .rotate([7, 0, 7])
-    .translate([width * 0.38, height / 2.5]);
-
-  // draw geojson polygons
-  $: pathGenerator = d3.geoPath().projection(europeProjection);
-
-  // calculate x,y screen positions of universities
-  function university_positions(airport) {
-    airport.forEach(function (d) {
-      d.longitude = parseFloat(d.longitude);
-      d.latitude = parseFloat(d.latitude);
-      const coords = europeProjection([d.longitude, d.latitude]);
-      d.x = coords[0];
-      d.y = coords[1];
-      d.outgoing = 0;
-      d.incoming = 0;
-      d.flights = [];
-    });
-    return airport;
-  }
-
-  function university_connections(flight) {
-    flight.forEach(function (d) {
-      d.num = parseInt(d.num);
-    });
-    return flight;
-  }
-
   let width = 400,
     height = 500,
     bar_height = 2000;
@@ -85,7 +52,10 @@
       (group) => group.people.length > 0,
     );
 
-    console.log(filteredMatches);
+    console.log(filteredMatches[22].people);
+    filteredMatches[22].people.forEach((person) => {
+      console.log(person.forename, person.surname);
+    });
 
     // Use a Set to keep track of unique ids
     const uniqueIds = new Set();
@@ -151,6 +121,39 @@
     // data for university connections
     all_lines = university_connections(capitals_connections_object);
   });
+
+  // projection
+  $: europeProjection = d3
+    .geoOrthographic()
+    .center([4, 55])
+    .scale([width * 1.1])
+    .rotate([7, 0, 7])
+    .translate([width * 0.38, height / 2.5]);
+
+  // draw geojson polygons
+  $: pathGenerator = d3.geoPath().projection(europeProjection);
+
+  // calculate x,y screen positions of universities
+  function university_positions(location) {
+    location.forEach(function (d) {
+      d.longitude = parseFloat(d.longitude);
+      d.latitude = parseFloat(d.latitude);
+      const coords = europeProjection([d.longitude, d.latitude]);
+      d.x = coords[0];
+      d.y = coords[1];
+      d.outgoing = 0;
+      d.incoming = 0;
+      d.flights = [];
+    });
+    return location;
+  }
+
+  function university_connections(link) {
+    link.forEach(function (d) {
+      d.num = parseInt(d.num);
+    });
+    return link;
+  }
 
   $: if (width) {
     all_locs = university_positions(uni_locations);
@@ -416,15 +419,15 @@
     },
     {
       id: 8,
-      name: "Guidelines and framework for universities",
-      start: parse("2027-11-01"),
-      end: parse("2029-07-01"), // +4 months
-    },
-    {
-      id: 9,
       name: "Dissemination & communication",
       start: parse("2027-06-01"),
       end: parse("2029-08-01"), // +3 months
+    },
+    {
+      id: 9,
+      name: "Guidelines and framework for universities",
+      start: parse("2027-11-01"),
+      end: parse("2029-07-01"), // +4 months
     },
     {
       id: 10,
@@ -551,7 +554,7 @@
     "Perugia",
     "Padua",
     "Wittenberg",
-    "Vienna"
+    "Vienna",
   ];
 </script>
 
