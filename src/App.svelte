@@ -1,7 +1,12 @@
 <script>
   import * as d3 from "d3";
   import { onMount } from "svelte";
-  import { unis, links, universities_coordiantes } from "./utils";
+  import {
+    unis,
+    links,
+    universities_coordiantes,
+    allowedOccupations,
+  } from "./utils";
 
   let width = 400,
     height = 500,
@@ -21,14 +26,92 @@
     uni_connections_locations = [],
     capitals_connections_object = [];
 
+  function capitalizeWords(str) {
+    return str.replace(/\b\w/g, (char) => char.toUpperCase());
+  }
+  function normalizeLocationName(name) {
+    if (!name) return null;
+
+    let cleaned = name
+      .normalize("NFD") // split accents
+      .replace(/[\u0300-\u036f]/g, "") // remove accents
+      .toLowerCase()
+      .trim();
+
+    // Remove Dublin postal districts (Dublin 1, Dublin 2, etc.)
+    cleaned = cleaned.replace(/^dublin\s+\d+$/, "dublin");
+
+    return cleaned;
+  }
+
+  function addLocation(location, person, locationMap) {
+    const normalizedKey = normalizeLocationName(location.official_name);
+    if (!normalizedKey) return;
+
+    if (!locationMap.has(normalizedKey)) {
+      locationMap.set(normalizedKey, {
+        location_name: capitalizeWords(normalizedKey),
+        latitude: location.latitude ?? null,
+        longitude: location.longitude ?? null,
+        people: new Map(), // 👈 dedupe by id
+      });
+    }
+
+    const locEntry = locationMap.get(normalizedKey);
+
+    // Deduplicate using person.id
+    locEntry.people.set(person.id, person);
+  }
+
+  function collectLocations(people, allowedOccupations) {
+    const locationMap = new Map();
+
+    people.forEach((person) => {
+      if (!person?.id) return;
+
+      // 1️⃣ other_universities
+      if (Array.isArray(person.other_universities)) {
+        person.other_universities.forEach((entry) => {
+          if (entry.location?.official_name) {
+            addLocation(entry.location, person, locationMap);
+          }
+        });
+      }
+
+      // 2️⃣ floruit (filtered)
+      if (Array.isArray(person.floruit)) {
+        person.floruit.forEach((entry) => {
+          if (
+            entry.location?.official_name &&
+            allowedOccupations.has(entry.occupation)
+          ) {
+            addLocation(entry.location, person, locationMap);
+          }
+        });
+      }
+    });
+
+    return Array.from(locationMap.values()).map((loc) => ({
+      location_name: loc.location_name,
+      latitude: loc.latitude,
+      longitude: loc.longitude,
+      people: Array.from(loc.people.values()),
+    }));
+  }
+
   // load the data
   Promise.all([
     d3.json("universities.json"),
     d3.csv("capitals.csv"),
     d3.json("europe.json"),
+    d3.json("all_other_uni_floruit.json"),
   ]).then(function (files) {
-    // map data
-    other_universities = files[0];
+    // other unviersity cleanup
+    let hovno = collectLocations(files[3], allowedOccupations);
+    console.log(hovno);
+
+    let // map data
+      other_universities = files[0];
 
     const groupedMatches = unis.map((univ) => {
       const aliases = univ.aliases || [univ.name];
@@ -52,10 +135,9 @@
       (group) => group.people.length > 0,
     );
 
-    console.log(filteredMatches[22].people);
-    filteredMatches[22].people.forEach((person) => {
-      console.log(person.forename, person.surname);
-    });
+    // filteredMatches[22].people.forEach((person) => {
+    //   console.log(person.forename, person.surname);
+    // });
 
     // Use a Set to keep track of unique ids
     const uniqueIds = new Set();
@@ -66,8 +148,8 @@
       });
     });
 
-    console.log("Unique count:", uniqueIds.size);
-    console.log("Unique IDs:", [...uniqueIds]);
+    // console.log("Unique count:", uniqueIds.size);
+    // console.log("Unique IDs:", [...uniqueIds]);
 
     enhancedLinks = links.map((link) => {
       const match = filteredMatches.find((m) => m.name === link.target.name);
@@ -116,7 +198,7 @@
     all_locs = university_positions(uni_locations);
     // data for connected university locations
     all_conn_locs = university_positions(uni_connections_locations);
-    console.log(all_conn_locs);
+    // console.log(all_conn_locs);
 
     // data for university connections
     all_lines = university_connections(capitals_connections_object);
@@ -559,6 +641,8 @@
 </script>
 
 <main bind:clientWidth={width} bind:clientHeight={height}>
+  <div id="map"></div>
+
   <!-- map -->
   <svg {width} {height}>
     <!-- <path d={pathGenerator({ type: "Sphere" })} fill="#e6e6e6" stroke="none" />
