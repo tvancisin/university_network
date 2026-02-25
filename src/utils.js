@@ -723,3 +723,156 @@ export let allowedOccupations = new Set([
     "professor of greek, latin and english"
 ]);
 
+export const valid_uni_locations = new Set([
+    // UK & Ireland
+    'Edinburgh',
+    'Glasgow',
+    'Aberdeen',
+    'St Andrews',
+    'Cambridge',
+    'Oxford',
+    'London',
+    'Dublin',
+    'Durham',
+    'Manchester',
+    'Birmingham',
+    'Leeds',
+    'Bristol',
+    'Belfast',
+    'Cardiff',
+    'Dundee',
+    'Newcastle Upon Tyne',
+    'Sheffield',
+    'Leicester',
+    'Exeter',
+    'Bangor',
+    'Nottingham',
+    'Hull',
+    'Girton',        // Girton College, Cambridge (women's college 1869)
+    'York',
+    'Cork',
+    'Penglais',      // Aberystwyth University campus
+
+    // Germany
+    'Berlin',
+    'Munich',
+    'Munchen',       // alternate spelling
+    'Heidelberg',
+    'Leipzig',
+    'Tubingen',
+    'Marburg',
+    'Wittenberg',
+    'Rostock',
+    'Gottingen',
+    'Halle (Saale)',
+    'Freiburg Im Breisgau',
+    'Giessen',
+    'GießEn',        // alternate encoding
+    'Strasbourg',    // was German at various points
+    'Helmstedt',
+    'Helmstadt',     // alternate spelling
+    'Frankfurt An Der Oder',
+
+    // Netherlands
+    'Leiden',
+    'Utrecht',
+    'Groningen',
+    'Amsterdam',
+    'Franeker',
+    'Harderwijk',
+    'Middleburg',    // Middelburg - associated with Franeker
+
+    // France
+    'Paris',
+    'Bordeaux',
+    'Toulouse',
+    'Montpellier',
+    'Caen',
+    'Reims',
+    'Angers',
+    'Orleans',       // Orléans
+    'Strasbourg',
+    'Aix-En-Provence',
+    'Blois',         // had an academy
+    'Saumur',        // Protestant academy
+    'Tours',         // had a law faculty
+    'Valence',       // had a university
+
+    // Italy
+    'Bologna',
+    'Padua',
+    'Florence',
+    'Rome',
+
+    // Austria / Central Europe
+    'Vienna',
+    'Prague',
+
+    // Switzerland
+    'Geneva',
+    'Basel',
+    'Zurich',
+
+    // Scandinavia
+    'Copenhagen',
+    'Uppsala',
+    'Stockholm',
+    'Rostock',       // Baltic context
+
+    // Belgium
+    'Leuven',        // Louvain
+    'Ghent',
+    'Liege',
+    'Brussels',
+
+    // Iberia
+    'Coimbra',
+
+    // Poland
+    'Gdansk',
+    'WrocłAw',       // Breslau/Wrocław
+
+    // Denmark
+    'Roskilde',
+    'Sorø',          // Sorø Academy
+
+    // North America
+    'Toronto',
+    'Montreal',
+    'Halifax',       // Dalhousie
+    'Kingston',      // Queen's University
+    'Quebec City',
+    'Princeton',
+    'New Haven',     // Yale
+    'Cambridge',     // Harvard (US)
+    'Philadelphia',  // Penn
+    'New York',      // Columbia
+    'Chicago',
+    'Washington',    // Georgetown / GWU
+    'Williamsburg',  // William & Mary
+    'Annapolis',     // St John's College
+    'Williamstown',  // Williams College
+    'Amherst',
+    'Clinton',       // Hamilton College
+    'Hanover',       // Dartmouth
+
+    // Australasia
+    'Melbourne',
+    'Sydney',
+    'Adelaide',
+    'Wellington',
+
+    // South Africa
+    'Cape Town',
+    'Stellenbosch',
+    'Pretoria',
+    'Bloemfontein',  // University of the Free State
+
+    // India
+    'Kolkata',       // Calcutta
+    'Mumbai',        // Bombay
+    'Chennai',       // Madras
+
+    // Greece
+    'Athina',        // Athens
+]);
